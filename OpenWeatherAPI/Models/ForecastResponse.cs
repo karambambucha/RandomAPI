@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace RandomAPI
+namespace RandomAPI.Models
 {
-    public class WeatherForecast
+    public class ForecastResponse
     {
         [JsonPropertyName("number")]
         public int Number { get; set; }

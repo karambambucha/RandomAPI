@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using RandomAPI.Models;
 using StackExchange.Redis;
 using System.Diagnostics;
 using System.Net.Http.Headers;
@@ -50,7 +51,7 @@ namespace RandomAPI.Controllers
                 await Task.WhenAll(setTask, expireTask);
             }
 
-            var forecast = JsonSerializer.Deserialize<IEnumerable<WeatherForecast>>(json);
+            var forecast = JsonSerializer.Deserialize<IEnumerable<ForecastResponse>>(json);
             watch.Stop();
             var result = new ForecastResult(forecast, watch.ElapsedMilliseconds);
 
