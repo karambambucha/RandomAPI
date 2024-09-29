@@ -3,11 +3,11 @@
     public class ForecastResult
     {
         public long ElapsedTime { get; }
-        public IEnumerable<ForecastResponse> Forecasts { get; }
+        public ForecastResponse Forecast { get; }
 
-        public ForecastResult(IEnumerable<ForecastResponse> forecasts, long elapsedTime)
+        public ForecastResult(ForecastResponse forecast, long elapsedTime)
         {
-            Forecasts = forecasts;
+            Forecast = forecast;
             ElapsedTime = elapsedTime;
         }
     }

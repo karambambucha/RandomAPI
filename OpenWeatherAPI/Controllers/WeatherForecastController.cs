@@ -23,35 +23,29 @@ namespace RandomAPI.Controllers
             _redis = muxer.GetDatabase();
         }
 
-        private async Task<string> GetForecast(double latitude, double longitude)
+        private async Task<string> GetForecast(string location, string key)
         {
-            var pointsRequestQuery = $"https://api.weather.gov/points/{latitude.ToString(System.Globalization.CultureInfo.InvariantCulture)},{longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)}"; //get the URI
+            var pointsRequestQuery = $"https://api.weatherapi.com/v1/current.json?key={key}&q={location}&aqi=yes"; //get the URI
             var result = await _client.GetFromJsonAsync<JsonObject>(pointsRequestQuery);
-            var gridX = result["properties"]["gridX"].ToString();
-            var gridY = result["properties"]["gridY"].ToString();
-            var gridId = result["Properties"]["gridId"].ToString();
-            var forecastRequestQuery = $"https://api.weather.gov/gridpoints/{gridId}/{gridX},{gridY}/forecast";
-            var forecastResult = await _client.GetFromJsonAsync<JsonObject>(forecastRequestQuery);
-            var periodsJson = forecastResult["properties"]["periods"].ToJsonString();
-            return periodsJson;
+            return result.ToJsonString();
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public async Task<ForecastResult> Get([FromQuery] double latitude, [FromQuery] double longitude)
+        public async Task<ForecastResult> Get([FromQuery] string location, [FromQuery] string key)
         {
             string json;
             var watch = Stopwatch.StartNew();
-            var keyName = $"forecast:{latitude},{longitude}";
+            var keyName = $"forecast:{location}";
             json = await _redis.StringGetAsync(keyName);
             if (string.IsNullOrEmpty(json))
             {
-                json = await GetForecast(latitude, longitude);
+                json = await GetForecast(location, key);
                 var setTask = _redis.StringSetAsync(keyName, json);
                 var expireTask = _redis.KeyExpireAsync(keyName, TimeSpan.FromSeconds(3600));
                 await Task.WhenAll(setTask, expireTask);
             }
 
-            var forecast = JsonSerializer.Deserialize<IEnumerable<ForecastResponse>>(json);
+            var forecast = JsonSerializer.Deserialize<ForecastResponse>(json);
             watch.Stop();
             var result = new ForecastResult(forecast, watch.ElapsedMilliseconds);
 
