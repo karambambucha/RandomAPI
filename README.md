@@ -1,3 +1,4 @@
+# Обзор
 Разные API для фетчинга и возвращение данных. Имеется: 
 1) Погода: https://api.weatherapi.com
 2) Dadata (не до конца имплементировано)
@@ -7,7 +8,8 @@
 - .NET 6.0 or later
 - Redis (локальная установка или контейнер в Docker)
 
-English
+# Overview (English)
+
 API for fetching and returning various data. Includes:
 1) Weather: https://api.weatherapi.com
 2) Dadata (not fully implemented)
